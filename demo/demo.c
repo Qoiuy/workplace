@@ -2,11 +2,13 @@
 
 void open_fun();
 void creat_fun();
+void read_fun();
 
 int main()
 {
 	open_fun();
 	creat_fun();
+	read_fun();
 	return 0;
 }
 
@@ -61,4 +63,35 @@ void creat_fun()
 		perror("open files /root/bash");
 	if(close(fd) == -1)
 		perror("error");
+}
+
+void read_fun()
+{
+/*
+ * 	#include <unistd.h>
+ * 	函数定义
+ * 	ssize_t read (int fd, void *buf, size_t len);
+ * 	从fd指向的文件的当前偏移开始  读取len字节长度 到 buf所指向的内存中
+ *
+ * 	返回值:
+ * 		ssize_t len 	返回写入buf中字节数
+ * 		0		到达文件末尾
+ * 		-1		出错
+ */
+
+/*从"/root/.bashrc"文件中读取前20的字符 到 word中*/
+	int 	fd;
+	char	word[21] = "nihao,wo de ";
+	ssize_t	fr;
+	fd = open("/root/.bashrc",O_RDONLY);
+	if(fd == -1)
+                perror("open files /root/.bashrc");
+	
+	fr = read(fd, &word[0], 20);
+	
+	/**/	printf("%s\n",word);	
+
+        if(close(fd) == -1)
+                perror("error");
+
 }
