@@ -79,19 +79,44 @@ void read_fun()
  * 		-1		出错
  */
 
-/*从"/root/.bashrc"文件中读取前20的字符 到 word中*/
+/*从"/root/.bashrc"文件中读取前20的字符 到 buf中*/
 	int 	fd;
-	char	word[21] = "nihao,wo de ";
+	char	buf[21];
 	ssize_t	fr;
 	fd = open("/root/.bashrc",O_RDONLY);
 	if(fd == -1)
                 perror("open files /root/.bashrc");
 	
-	fr = read(fd, &word[0], 20);
+	fr = read(fd, &buf[0], 20);
 	
-	/**/	printf("%s\n",word);	
+	/*	printf("%s\n",buf);	*/
 
         if(close(fd) == -1)
                 perror("error");
+
+/*从"/root/.bashrc"文件中真正读入len个字节*/
+	int len = 10000;
+	char buf_a[10001] = "nima";
+	fd = open("/root/.bashrc", O_RDONLY);
+	if(fd == -1)
+		perror("open files /root/.bashrc");
+	
+	/*一直读完所有len字节(len==0) 或读到文件末尾(fr==0)  */
+	while( len != 0 && (fr = read(fd, &buf_a[0], len) != 0)) {
+		if(fd == -1) {
+			/* 读取任何字节之前接收到信号 调用可以重新执行 -->调用返回-1 并且errno的值为EINTR*/
+			if(errno == EINTR)
+				continue;
+			perror("read");
+			break;
+		}
+		
+		/*情况二 读入的字节数大于0小于len*/
+		len -= fr;
+		/*???原意是将内存扩大fr个字节*/
+		/*&buf_a += fr;*/
+	}
+	/*printf("%s", buf_a); */
+	 	
 
 }
